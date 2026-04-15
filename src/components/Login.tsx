@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useGame } from '../context/GameContext';
 import { motion } from 'motion/react';
-import { Rocket, GraduationCap, User } from 'lucide-react';
+import { Library, GraduationCap, User } from 'lucide-react';
 
 const Login: React.FC = () => {
   const { setPlayer } = useGame();
@@ -24,10 +24,10 @@ const Login: React.FC = () => {
       >
         <div className="text-center mb-10">
           <div className="inline-block p-5 bg-blue-50 rounded-2xl mb-5">
-            <Rocket className="w-12 h-12 text-primary" />
+            <Library className="w-12 h-12 text-primary" />
           </div>
-          <h1 className="text-4xl font-black text-primary mb-2 tracking-tight uppercase">MATH CHALLENGE</h1>
-          <p className="text-slate-400 font-bold uppercase text-xs tracking-widest">Đấu trường Toán học hiện đại</p>
+          <h1 className="text-4xl font-black text-primary mb-2 tracking-tight uppercase">CÂY CẦU TRI THỨC</h1>
+          <p className="text-slate-400 font-bold uppercase text-xs tracking-widest">Vượt qua thử thách - Xây cầu tri thức</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">

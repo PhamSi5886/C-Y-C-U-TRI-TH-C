@@ -44,8 +44,8 @@ const Game: React.FC = () => {
       <div className="min-h-screen bg-bg flex flex-col">
         <header className="h-20 bg-white border-b-4 border-primary flex items-center justify-between px-10 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-white font-bold text-2xl">∑</div>
-            <div className="text-2xl font-extrabold text-primary tracking-tight">MATH GESTURE</div>
+            <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-white font-bold text-2xl">🌉</div>
+            <div className="text-2xl font-extrabold text-primary tracking-tight">CÂY CẦU TRI THỨC</div>
           </div>
           <div className="flex items-center gap-5">
             <div className="bg-blue-50 text-primary px-4 py-2 rounded-full font-bold text-sm uppercase">LỚP {state.player?.className}</div>
@@ -111,9 +111,9 @@ const Game: React.FC = () => {
           <div className="w-24 h-24 bg-yellow-100 rounded-3xl flex items-center justify-center mx-auto mb-8">
             <Trophy className="w-12 h-12 text-secondary" />
           </div>
-          <h2 className="text-5xl font-black text-primary mb-4 uppercase tracking-tight">KẾT QUẢ</h2>
+          <h2 className="text-5xl font-black text-primary mb-4 uppercase tracking-tight">HOÀN THÀNH CÂY CẦU!</h2>
           <p className="text-2xl font-bold text-slate-500 mb-10">
-            Bạn đã đạt được <span className="text-primary text-4xl">{state.score}</span> điểm
+            Bạn đã xây dựng được <span className="text-primary text-4xl">{state.score}</span> điểm tri thức
           </p>
           
           <div className="space-y-4">
@@ -141,8 +141,8 @@ const Game: React.FC = () => {
     <div className="h-screen bg-bg flex flex-col overflow-hidden">
       <header className="h-20 bg-white border-b-4 border-primary flex items-center justify-between px-10 shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-white font-bold text-2xl">∑</div>
-          <div className="text-2xl font-extrabold text-primary tracking-tight uppercase">MATH GESTURE</div>
+          <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-white font-bold text-2xl">🌉</div>
+          <div className="text-2xl font-extrabold text-primary tracking-tight uppercase">CÂY CẦU TRI THỨC</div>
         </div>
         <div className="flex items-center gap-5">
           <div className="bg-blue-50 text-primary px-4 py-2 rounded-full font-bold text-sm uppercase">LỚP {state.player?.className}</div>
@@ -188,18 +188,24 @@ const Game: React.FC = () => {
         </aside>
       </main>
 
-      <footer className="h-[60px] bg-white border-t-2 border-slate-100 flex items-center px-10 shrink-0">
-        <div className="font-bold text-slate-400 text-sm uppercase mr-5">Tiến độ:</div>
-        <div className="flex gap-3">
-          {Array.from({ length: 10 }).map((_, i) => (
+      <footer className="h-[80px] bg-white border-t-4 border-blue-50 flex items-center px-10 shrink-0 relative">
+        <div className="absolute top-0 left-0 w-full h-1 bg-slate-100" />
+        <div className="font-bold text-slate-400 text-sm uppercase mr-8">Cầu tri thức:</div>
+        <div className="flex-1 flex items-center justify-between max-w-4xl relative">
+          <div className="absolute h-2 bg-slate-100 w-full rounded-full top-1/2 -translate-y-1/2" />
+          <div 
+            className="absolute h-2 bg-primary rounded-full top-1/2 -translate-y-1/2 transition-all duration-500" 
+            style={{ width: `${(state.currentQuestionIndex / 10) * 100}%` }}
+          />
+          {Array.from({ length: 11 }).map((_, i) => (
             <div
               key={i}
-              className={`w-3.5 h-3.5 rounded-full transition-all ${
-                i < state.currentQuestionIndex ? 'bg-accent' :
-                i === state.currentQuestionIndex ? 'bg-primary ring-4 ring-blue-100' :
-                'bg-slate-200'
+              className={`w-6 h-6 rounded-full z-10 flex items-center justify-center transition-all border-4 ${
+                i <= state.currentQuestionIndex ? 'bg-primary border-blue-100' : 'bg-white border-slate-200'
               }`}
-            />
+            >
+              {i === 10 && <Trophy className={`w-3 h-3 ${i <= state.currentQuestionIndex ? 'text-white' : 'text-slate-300'}`} />}
+            </div>
           ))}
         </div>
       </footer>
