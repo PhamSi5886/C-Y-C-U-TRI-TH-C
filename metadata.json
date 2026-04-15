@@ -1,0 +1,10 @@
+{
+  "name": "CÂY CẦU TRI THỨC",
+  "description": "A fun math game for kids using hand gestures to answer questions.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [],
+  "z7": [],
+  "Yp": []
+}
