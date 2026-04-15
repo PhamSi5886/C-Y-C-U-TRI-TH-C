@@ -139,33 +139,37 @@ const HandTracking: React.FC<HandTrackingProps> = ({ onGesture, active }) => {
     const fingers = [];
     
     // Thumb: Check distance between thumb tip and pinky base or use horizontal position
-    // For a mirrored view, we check if thumb tip is "outside" the index finger base
     const thumbTip = landmarks[4];
     const thumbBase = landmarks[2];
     const indexBase = landmarks[5];
     
     // Simple thumb detection: is it extended horizontally?
-    if (Math.abs(thumbTip.x - indexBase.x) > Math.abs(thumbBase.x - indexBase.x)) {
-      fingers.push(true);
-    }
+    const isThumbUp = Math.abs(thumbTip.x - indexBase.x) > Math.abs(thumbBase.x - indexBase.x);
+    if (isThumbUp) fingers.push('thumb');
     
     // Other fingers: is the tip higher than the PIP joint?
-    if (landmarks[8].y < landmarks[6].y) fingers.push(true);
-    if (landmarks[12].y < landmarks[10].y) fingers.push(true);
-    if (landmarks[16].y < landmarks[14].y) fingers.push(true);
-    if (landmarks[20].y < landmarks[18].y) fingers.push(true);
+    const isIndexUp = landmarks[8].y < landmarks[6].y;
+    const isMiddleUp = landmarks[12].y < landmarks[10].y;
+    const isRingUp = landmarks[16].y < landmarks[14].y;
+    const isPinkyUp = landmarks[20].y < landmarks[18].y;
+    
+    if (isIndexUp) fingers.push('index');
+    if (isMiddleUp) fingers.push('middle');
+    if (isRingUp) fingers.push('ring');
+    if (isPinkyUp) fingers.push('pinky');
 
     const count = fingers.length;
     
-    // Map finger count to A, B, C, D
-    if (count <= 1) {
-      // Check if it's a fist (all fingers down)
-      const isFist = !fingers.some((f, i) => i > 0 && f); // index, middle, ring, pinky are down
-      if (isFist) return 'A';
-      return 'B';
-    }
-    if (count === 2) return 'C';
-    if (count >= 3) return 'D';
+    // New Mapping:
+    // 1 finger (index) -> A
+    // 2 fingers -> B
+    // 3 fingers -> C
+    // 5 fingers (open palm) -> D
+    
+    if (count === 1 && isIndexUp) return 'A';
+    if (count === 2 && isIndexUp && isMiddleUp) return 'B';
+    if (count === 3 && isIndexUp && isMiddleUp && isRingUp) return 'C';
+    if (count >= 4) return 'D'; // 4 or 5 fingers for D
     
     return null;
   };
@@ -174,7 +178,7 @@ const HandTracking: React.FC<HandTrackingProps> = ({ onGesture, active }) => {
     if (newGesture === lastGestureRef.current) {
       if (newGesture && holdStartTimeRef.current) {
         const elapsed = Date.now() - holdStartTimeRef.current;
-        const progress = Math.min(elapsed / 1500, 1);
+        const progress = Math.min(elapsed / 1000, 1); // Set to 1.0s for confirmation
         setHoldProgress(progress);
         
         if (progress === 1) {
@@ -252,7 +256,7 @@ const HandTracking: React.FC<HandTrackingProps> = ({ onGesture, active }) => {
         )}
         {isCameraReady && gesture && (
           <div className="text-[#FFF176] text-xs font-bold mt-1">
-            Giữ 1.5s để xác nhận...
+            Giữ 1.0s để xác nhận...
           </div>
         )}
       </div>

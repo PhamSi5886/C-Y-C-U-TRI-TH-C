@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { Trophy, Star, Brain, Timer, CheckCircle2, XCircle } from 'lucide-react';
@@ -10,7 +10,7 @@ import useSound from 'use-sound';
 
 const Game: React.FC = () => {
   const { state, startGame, submitAnswer, resetGame } = useGame();
-  const [showFeedback, setShowFeedback] = useState<'correct' | 'incorrect' | null>(null);
+  const [showFeedback, setShowFeedback] = useState<'correct' | 'incorrect' | 'timeout' | null>(null);
   
   // Placeholder sounds
   const [playCorrect] = useSound('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
@@ -39,6 +39,17 @@ const Game: React.FC = () => {
     }, 2000);
   };
 
+  // Effect to show timeout feedback
+  useEffect(() => {
+    if (state.timeLeft === 0 && !state.isGameOver && !showFeedback) {
+      setShowFeedback('timeout');
+      playWrong();
+      setTimeout(() => {
+        setShowFeedback(null);
+      }, 2000);
+    }
+  }, [state.timeLeft, state.isGameOver]);
+
   if (!state.currentLevel) {
     return (
       <div className="min-h-screen bg-bg flex flex-col">
@@ -48,6 +59,9 @@ const Game: React.FC = () => {
             <div className="text-2xl font-extrabold text-primary tracking-tight">CÂY CẦU TRI THỨC</div>
           </div>
           <div className="flex items-center gap-5">
+            <div className="bg-red-50 text-danger px-4 py-2 rounded-full font-bold text-sm uppercase flex items-center gap-2">
+              <Timer className="w-4 h-4" /> {state.timeLeft}S
+            </div>
             <div className="bg-blue-50 text-primary px-4 py-2 rounded-full font-bold text-sm uppercase">LỚP {state.player?.className}</div>
             <div className="font-extrabold text-text uppercase">{state.player?.name}</div>
             <button onClick={() => resetGame()} className="text-slate-400 hover:text-danger font-bold transition-colors">Đăng xuất</button>
@@ -145,6 +159,9 @@ const Game: React.FC = () => {
           <div className="text-2xl font-extrabold text-primary tracking-tight uppercase">CÂY CẦU TRI THỨC</div>
         </div>
         <div className="flex items-center gap-5">
+          <div className={`px-4 py-2 rounded-full font-bold text-sm uppercase flex items-center gap-2 transition-colors ${state.timeLeft <= 5 ? 'bg-red-100 text-danger animate-pulse' : 'bg-red-50 text-danger'}`}>
+            <Timer className="w-4 h-4" /> {state.timeLeft}S
+          </div>
           <div className="bg-blue-50 text-primary px-4 py-2 rounded-full font-bold text-sm uppercase">LỚP {state.player?.className}</div>
           <div className="bg-yellow-50 text-secondary px-4 py-2 rounded-full font-bold text-sm uppercase flex items-center gap-2">
             <Trophy className="w-4 h-4" /> {state.score} ĐIỂM
@@ -156,6 +173,14 @@ const Game: React.FC = () => {
 
       <main className="flex-1 grid grid-cols-[1fr_320px] gap-6 p-6 overflow-hidden">
         <div className="flex flex-col gap-6 overflow-hidden">
+          <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+            <motion.div 
+              className={`h-full ${state.timeLeft <= 5 ? 'bg-danger' : 'bg-primary'}`}
+              initial={{ width: '100%' }}
+              animate={{ width: `${(state.timeLeft / 20) * 100}%` }}
+              transition={{ duration: 1, ease: 'linear' }}
+            />
+          </div>
           <QuestionDisplay question={currentQuestion} />
         </div>
 
@@ -230,10 +255,15 @@ const Game: React.FC = () => {
                   <CheckCircle2 className="w-32 h-32 text-accent mb-4" />
                   <h2 className="text-4xl font-black text-accent uppercase tracking-tight">CHÍNH XÁC!</h2>
                 </>
-              ) : (
+              ) : showFeedback === 'incorrect' ? (
                 <>
                   <XCircle className="w-32 h-32 text-danger mb-4" />
                   <h2 className="text-4xl font-black text-danger uppercase tracking-tight">SAI RỒI!</h2>
+                </>
+              ) : (
+                <>
+                  <Timer className="w-32 h-32 text-danger mb-4 animate-bounce" />
+                  <h2 className="text-4xl font-black text-danger uppercase tracking-tight">HẾT GIỜ!</h2>
                 </>
               )}
             </motion.div>

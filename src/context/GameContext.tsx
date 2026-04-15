@@ -23,10 +23,23 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     currentQuestionIndex: 0,
     questions: [],
     isGameOver: false,
+    timeLeft: 20,
   });
 
   const [leaderboard, setLeaderboard] = useState<Player[]>([]);
   const [allQuestions, setAllQuestions] = useState<Question[]>([]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (state.currentLevel && !state.isGameOver && state.timeLeft > 0) {
+      timer = setInterval(() => {
+        setState(prev => ({ ...prev, timeLeft: prev.timeLeft - 1 }));
+      }, 1000);
+    } else if (state.timeLeft === 0 && !state.isGameOver) {
+      submitAnswer('TIMEOUT'); // Special value for timeout
+    }
+    return () => clearInterval(timer);
+  }, [state.currentLevel, state.isGameOver, state.timeLeft]);
 
   useEffect(() => {
     const savedQuestions = localStorage.getItem('math_questions');
@@ -60,6 +73,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       score: 0,
       currentQuestionIndex: 0,
       isGameOver: false,
+      timeLeft: 20,
     }));
   };
 
@@ -90,12 +104,14 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         ...prev,
         score: newScore,
         isGameOver: true,
+        timeLeft: 0,
       }));
     } else {
       setState(prev => ({
         ...prev,
         score: newScore,
         currentQuestionIndex: nextIndex,
+        timeLeft: 20,
       }));
     }
     

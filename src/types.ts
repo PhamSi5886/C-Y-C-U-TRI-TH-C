@@ -25,4 +25,5 @@ export interface GameState {
   currentQuestionIndex: number;
   questions: Question[];
   isGameOver: boolean;
+  timeLeft: number;
 }

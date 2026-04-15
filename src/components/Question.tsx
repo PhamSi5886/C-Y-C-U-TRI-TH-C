@@ -9,7 +9,7 @@ interface QuestionProps {
 const QuestionDisplay: React.FC<QuestionProps> = ({ question }) => {
   const options = question.options || [];
   const labels = ['A', 'B', 'C', 'D'];
-  const gestures = ['✊ Nắm tay', '☝️ 1 Ngón', '✌️ 2 Ngón', '✋ ≥3 Ngón'];
+  const gestures = ['☝️ 1 Ngón', '✌️ 2 Ngón', '🤟 3 Ngón', '✋ Bàn tay'];
 
   return (
     <div className="flex flex-col gap-6 flex-1 overflow-hidden">
